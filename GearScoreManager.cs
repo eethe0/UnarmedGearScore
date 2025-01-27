@@ -19,7 +19,11 @@ class GearScoreManager
 
     public GearScoreManager()
     {
-        Initialize();
+        world = World.s_AllWorlds.ToArray().FirstOrDefault(world => world.Name == "Server");
+
+        userQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<User>());
+
+        StartCoroutine(Update());
     }
 
     void StartCoroutine(IEnumerator routine)
@@ -30,17 +34,6 @@ class GearScoreManager
             UnityEngine.Object.DontDestroyOnLoad(monoBehaviour.gameObject);
         }
         monoBehaviour.StartCoroutine(routine.WrapToIl2Cpp());
-    }
-
-    void Initialize()
-    {
-        Plugin._log.LogInfo("Initializing GearScoreManager");
-
-        world = World.s_AllWorlds.ToArray().FirstOrDefault(world => world.Name == "Server");
-
-        userQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<User>());
-
-        StartCoroutine(Update());
     }
 
     IEnumerator Update()
