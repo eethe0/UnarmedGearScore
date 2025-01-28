@@ -301,4 +301,4 @@ dist/
 secrets.json
 DevCommands.cs
 
-./run
+run
