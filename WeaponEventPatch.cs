@@ -16,12 +16,7 @@ static class WeaponEventPatch
 
     static void Postfix(WeaponLevelSystem_Spawn __instance)
     {
-        Update(__instance.__query_1111682356_0);
-    }
-
-    static void Update(EntityQuery query)
-    {
-        var entities = query.ToEntityArray(Allocator.Temp);
+        var entities = __instance.__query_1111682356_0.ToEntityArray(Allocator.Temp);
 
         try
         {
