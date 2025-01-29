@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using ProjectM;
 using ProjectM.Gameplay.Systems;
@@ -11,11 +10,12 @@ namespace UnarmedGearScore;
 [HarmonyPatch(typeof(WeaponLevelSystem_Spawn), nameof(WeaponLevelSystem_Spawn.OnUpdate))]
 static class WeaponEventPatch
 {
-    static World world = World.s_AllWorlds.ToArray().FirstOrDefault(world => world.Name == "Server");
     static Dictionary<Entity, float> characterWeaponLevels = [];
 
     static void Postfix(WeaponLevelSystem_Spawn __instance)
     {
+        var em = __instance.EntityManager;
+
         var entities = __instance.__query_1111682356_0.ToEntityArray(Allocator.Temp);
 
         try
@@ -23,12 +23,12 @@ static class WeaponEventPatch
             // Check each player's gear score and update it
             foreach (var entity in entities)
             {
-                if (!world.EntityManager.HasComponent<EntityOwner>(entity)) continue;
-                var characterEntity = world.EntityManager.GetComponentData<EntityOwner>(entity).Owner;
+                if (!em.HasComponent<EntityOwner>(entity)) continue;
+                var characterEntity = em.GetComponentData<EntityOwner>(entity).Owner;
 
-                if (!world.EntityManager.Exists(characterEntity)) continue;
-                if (!world.EntityManager.HasComponent<Equipment>(characterEntity)) continue;
-                var equipment = world.EntityManager.GetComponentData<Equipment>(characterEntity);
+                if (!em.Exists(characterEntity)) continue;
+                if (!em.HasComponent<Equipment>(characterEntity)) continue;
+                var equipment = em.GetComponentData<Equipment>(characterEntity);
                 var weaponLevel = equipment.WeaponLevel;
 
                 if (weaponLevel == 0f)
@@ -39,7 +39,7 @@ static class WeaponEventPatch
 
                     equipment.WeaponLevel._Value = previousWeaponLevel;
 
-                    world.EntityManager.SetComponentData(characterEntity, equipment);
+                    em.SetComponentData(characterEntity, equipment);
                 }
                 else
                 {
